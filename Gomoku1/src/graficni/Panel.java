@@ -6,16 +6,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Set;
 
 import javax.swing.JPanel;
 
 import logika.Igra;
 import splosno.Koordinati;
-
-
-
-
-
 
 
 
@@ -31,8 +27,9 @@ public class Panel extends JPanel implements MouseListener {
 	  
 	  public int x, y;
 	  public static Koordinati clovekPoteza;
-	  public boolean mustDraw = true;
 	  public static int poteza;
+	  public static Igra igra;
+	  public static Set<Koordinati> moznePoteze = igra.moznePoteze;
 	  
 	public Panel(int sirina, int visina, int rows, int cols) {
 		super(); 
@@ -69,21 +66,27 @@ public class Panel extends JPanel implements MouseListener {
 		      g.drawLine(i * rowWid, 0, i * rowWid, height);
 		    }
 		    
-		    if(!mustDraw) return;
-		    g.setColor(Color.red);
-		    g.fillOval(CentralizirajX(x, 15, 500), CentralizirajY(y, 15, 500), 10, 10);
-		    poteza ++;
-		    mustDraw = false;
-		    
-		    
+		    if (poteza % 2 == 0) {
+			    if (igra.moznePoteze.contains(clovekPoteza)) {
+			    	Igra.preveriZmago(clovekPoteza);
+			    	if (igra.zmagovalec == Igra.PRAZNO) {
+				    	Igra.odigrajPotezo(clovekPoteza);
+					    g.setColor(Color.red);
+					    g.fillOval(CentralizirajX(x, 15, 500), CentralizirajY(y, 15, 500), 15, 15);
+					    poteza ++;
+			    	}
+			    }
+		    }
 		    if (poteza % 2 != 0) {
 		    	System.out.println(poteza + "POTEZA");
 		    	Koordinati k = Igra.racunalnikPoteza();
-		    	
-		    	g.setColor(Color.blue);
-			    g.fillOval(pretvoriRacunalnik(k.getX(), 15, 500), pretvoriRacunalnik(k.getY(), 15, 500), 10, 10);
-			    Igra.odigrajPotezo(k);
-			    poteza ++;
+		    	Igra.preveriZmago(k);
+		    	if (igra.zmagovalec == Igra.PRAZNO) {
+			    	g.setColor(Color.blue);
+				    g.fillOval(CentralizirajX(pretvoriRacunalnik(k.getX(), 15, 500),15,500), CentralizirajY(pretvoriRacunalnik(k.getY(), 15, 500),15,500), 15, 15);
+				    Igra.odigrajPotezo(k);
+				    poteza ++;
+		    	}
 		    }
 		    
 		    
@@ -96,7 +99,7 @@ public class Panel extends JPanel implements MouseListener {
 			if (x < i) {
 				x = (int)Math.round((i + (i - (h / rows) )) / 2); //x premaknemo v sredino
 
-				return x;
+				return x-7;
 		}
 			
 	}
@@ -107,7 +110,7 @@ public class Panel extends JPanel implements MouseListener {
 		for (int i = 0; i < w; i = i + (int)Math.round(w / cols)){
 			if (y < i) {
 				y = (int)Math.round((i + (i - (w / cols) )) / 2); //x premaknemo v sredino
-				return y;
+				return y-7;
 
 		}
 	}
@@ -167,10 +170,9 @@ public class Panel extends JPanel implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		x = e.getX();
-		y = e.getY();	
+		y = e.getY();
 		clovekPoteza = (new Koordinati((pretvoriKoordinatoX(x, 15, 500)), pretvoriKoordinatoY(y, 15, 500)));
-		mustDraw = true;
-		Igra.odigrajPotezo(clovekPoteza);
+		System.out.println(clovekPoteza);
 		repaint();
 
 	}
