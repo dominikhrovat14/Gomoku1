@@ -18,7 +18,6 @@ public class Igra {
 	public static Igra igra;
 	public static int poteza = 0;
 	public static char zmagovalec;
-	public static Frame jadnik;
 	
 	public Igra(int dim) {
 		this.dim = dim;
@@ -41,7 +40,6 @@ public class Igra {
 	
 	public static void zacni (Frame okvircek) {
 		igra = new Igra ();
-		jadnik = okvircek;	
 	}
 	
 	public static boolean odigrajPotezo(Koordinati k) {
