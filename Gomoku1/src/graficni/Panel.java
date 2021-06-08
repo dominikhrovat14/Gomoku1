@@ -19,7 +19,9 @@ public class Panel extends JPanel implements MouseListener {
 	
 	
 	
-	  int width, height;
+	  static int width;
+
+	  static int height;
 
 	  int rows;
 
@@ -27,12 +29,17 @@ public class Panel extends JPanel implements MouseListener {
 	  
 	  public int x, y;
 	  public static Koordinati clovekPoteza;
-	  public static int poteza;
-	  public static Igra igra;
-	  public static Set<Koordinati> moznePoteze = igra.moznePoteze;
+//	  public static int poteza;
+	  public  Igra igra;
+	  public static  int velikost = 500;
+	  public  Set<Koordinati> moznePoteze;
 	  
-	public Panel(int sirina, int visina, int rows, int cols) {
+	public Panel(int sirina, int visina, int rows, int cols, Igra igra) {
 		super(); 
+		
+		this.igra = igra;
+		this.moznePoteze = igra.moznePoteze;
+		
 		setPreferredSize(new Dimension(sirina, visina));
 		GridsCanvas(sirina, visina, rows, cols);
 		
@@ -43,49 +50,50 @@ public class Panel extends JPanel implements MouseListener {
 		
 		
 		public void GridsCanvas(int w, int h, int r, int c) {
+			System.out.println("NOTRI");
 		    setSize(width = w, height = h);
 		    rows = r;
 		    cols = c;
 		    
 		  }
+		
+		public static void dimenzije() {
+			velikost = Frame.velikost;
+		}
 
 	
 	  public void paint(Graphics g) {
 		    int i;
-		    width = getSize().width;
-		    height = getSize().height;
-		    
 		    // narisi vrtice
-		    int rowHt = height / (rows);
+
+		    int rowHt = velikost / (rows);
+		    System.out.println(velikost / (rows));
 		    for (i = 0; i < rows; i++)
-		      g.drawLine(0, i * rowHt, width, i * rowHt);
+		      g.drawLine(0, i * rowHt, velikost, i * rowHt);
 
 		    // narisi stolpce
-		    int rowWid = width / (cols);
+		    int rowWid = velikost / (cols);
 		    for (i = 0; i < cols; i++) {
-		      g.drawLine(i * rowWid, 0, i * rowWid, height);
+		      g.drawLine(i * rowWid, 0, i * rowWid, velikost);
 		    }
 		    
-		    if (poteza % 2 == 0) {
+		    if (igra.poteza % 2 == 0) {
 			    if (igra.moznePoteze.contains(clovekPoteza)) {
-			    	Igra.preveriZmago(clovekPoteza);
+			    	igra.preveriZmago(clovekPoteza);
 			    	if (igra.zmagovalec == Igra.PRAZNO) {
-				    	Igra.odigrajPotezo(clovekPoteza);
-					    g.setColor(Color.red);
+			    		igra.odigrajPotezo(clovekPoteza);
+					    g.setColor(Frame.barva);
 					    g.fillOval(CentralizirajX(x, 15, 500), CentralizirajY(y, 15, 500), 15, 15);
-					    poteza ++;
 			    	}
 			    }
 		    }
-		    if (poteza % 2 != 0) {
-		    	System.out.println(poteza + "POTEZA");
-		    	Koordinati k = Igra.racunalnikPoteza();
-		    	Igra.preveriZmago(k);
+		    if (igra.poteza % 2 != 0) {
+		    	Koordinati k = igra.racunalnikPoteza();
+		    	igra.preveriZmago(k);
 		    	if (igra.zmagovalec == Igra.PRAZNO) {
 			    	g.setColor(Color.blue);
 				    g.fillOval(CentralizirajX(pretvoriRacunalnik(k.getX(), 15, 500),15,500), CentralizirajY(pretvoriRacunalnik(k.getY(), 15, 500),15,500), 15, 15);
-				    Igra.odigrajPotezo(k);
-				    poteza ++;
+				    igra.odigrajPotezo(k);
 		    	}
 		    }
 		    
@@ -158,21 +166,14 @@ public class Panel extends JPanel implements MouseListener {
 		return 0;
 	}
 	
-	
 
-
-
-
-	
-	
 	
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		x = e.getX();
 		y = e.getY();
-		clovekPoteza = (new Koordinati((pretvoriKoordinatoX(x, 15, 500)), pretvoriKoordinatoY(y, 15, 500)));
-		System.out.println(clovekPoteza);
+		clovekPoteza = (new Koordinati((pretvoriKoordinatoX(x, rows, width)), pretvoriKoordinatoY(y, cols, height)));
 		repaint();
 
 	}

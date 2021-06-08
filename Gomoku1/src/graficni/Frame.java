@@ -13,6 +13,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import logika.Igra;
+
 @SuppressWarnings("serial")
 public class Frame extends JFrame implements ActionListener {
 	
@@ -23,17 +25,22 @@ public class Frame extends JFrame implements ActionListener {
 	private JMenuItem menuClovek;
 	private JMenuItem menuBarva;
 	private JMenuItem menuCas;
-	private JButton izberiBarvo;
-	private JLabel aktivnaBarvaLabel;
 	private int height = 500;
 	private int width = 500;
 	
-public Frame() {
+	private JLabel aktivnaBarvaLabel;
+	static Color barva;
+	public static int velikost;
+	
+	public Igra igra;
+	
+	public Frame(Igra igra) {
 		
 		super();
 		setTitle("Gomoku1");
+		setBackground(Color.WHITE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		panel = new Panel(height, width, 15, 15); //panel = new Panel(800, 800, panel.cols, panel.rows)
+		panel = new Panel(height, width, 15, 15, igra); //panel = new Panel(800, 800, panel.cols, panel.rows)
 		add(panel);
 		setSize(width, height);
 		
@@ -42,13 +49,20 @@ public Frame() {
 		
 		JMenu menuIgra = dodajMenu(menubar, "Lastnosti igre");
 		JMenu menuIgralec = dodajMenu(menubar, "Lastnosti igralca");
-		JMenu menuNastavitve = dodajMenu(menubar, "Lastnosti grafiËnega vmesnika");
+		JMenu menuNastavitve = dodajMenu(menubar, "Lastnosti grafiƒçnega vmesnika");
 		
 		menuVelikost = dodajMenuItem(menuIgra,"Velikost");
 		menuIme = dodajMenuItem(menuIgralec,"Ime");
-		menuClovek = dodajMenuItem(menuIgralec,"»lovek ali raËunalnik");
+		menuClovek = dodajMenuItem(menuIgralec,"ƒålovek ali raƒçunalnik");
 		menuBarva = dodajMenuItem(menuNastavitve,"Barva kovanca");
-		menuCas = dodajMenuItem(menuNastavitve,"»as poteze");
+		menuCas = dodajMenuItem(menuNastavitve,"ƒåas poteze");
+		
+		
+		Color aktivnaBarva = Color.RED;
+		aktivnaBarvaLabel = new JLabel(" ");
+		aktivnaBarvaLabel.setOpaque(true);
+		aktivnaBarvaLabel.setBackground(aktivnaBarva);
+		setBarva(aktivnaBarva);
 		
 		
 }
@@ -66,24 +80,47 @@ public Frame() {
 		return menuitem;
 	}
 	
+	public void setBarva(Color barva) {
+		this.barva = barva;
+		}
+	
+	public Color getBarva(Color barva) {
+		this.barva = barva;
+		return this.barva;
+		}
+	
 	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		if (source == menuVelikost) {
-			height = Integer.parseInt(JOptionPane.showInputDialog(this, "Stolpci: "));
-			width = Integer.parseInt(JOptionPane.showInputDialog(this, "Vrstice: "));
-			panel.setSize(width,height);
-			setSize(width, height);
+			velikost = Integer.parseInt(JOptionPane.showInputDialog(this, "Velikost okna: "));
+			Panel.dimenzije();
+			panel.setSize(velikost,velikost);
+			setSize(velikost, velikost);
 		}
-
+		if (source == menuIme) {
+			String ime = JOptionPane.showInputDialog(this, "Ime igralca: ");
 		
+		}
+		if (source == menuClovek) {
+			
+		}
 		
-	
-	
+		if (source == menuBarva) {
+			Color novaBarva = JColorChooser.showDialog(this,
+					"Izberite barvo", getBarva(barva));
+					if (novaBarva != null) {
+					setBarva(novaBarva);
+					aktivnaBarvaLabel.setBackground(novaBarva);
+			
+					}
+			}
+		
 	}
+	
 		
-	}
+}
 
 
